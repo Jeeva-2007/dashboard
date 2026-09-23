@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxmox VE - Server Telemetry Master</title>
+  <link rel="stylesheet" href="/css/proxmox.css">
+  <!-- Chart.js for Proxmox Time-Series Telemetry Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ================= TOP BAR ================= -->
+  <header class="pve-topbar">
+    <div class="pve-brand">
+      <div class="pve-logo-badge">
+        <span>PROXMOX</span>
+        <span style="font-weight: 400; opacity: 0.9;">VE</span>
+      </div>
+      <span class="pve-title">Telemetry Monitor</span>
+      <span class="pve-subtitle" id="cluster-status-text">Datacenter (Cluster Mode)</span>
+    </div>
+
+    <div class="pve-top-controls">
+      <!-- User Selectable Polling Time -->
+      <div class="pve-polling-wrapper">
+        <label for="poll-interval-select">Poll Interval:</label>
+        <select id="poll-interval-select" class="pve-select" onchange="changePollingInterval(this.value)">
+          <option value="2">2s (Fast)</option>
+          <option value="5" selected>5s (Default)</option>
+          <option value="10">10s (Normal)</option>
+          <option value="30">30s (Relaxed)</option>
+          <option value="60">60s (Slow)</option>
+          <option value="0">Paused</option>
+        </select>
+      </div>
+
+      <button class="pve-btn" onclick="pollCurrentNodeNow()" title="Trigger immediate telemetry poll">
+        <span>↻</span> Poll Now
+      </button>
+
+      <button class="pve-btn pve-btn-primary" onclick="openAddServerModal()">
+        <span>+</span> Add Node
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= WORKSPACE ================= -->
+  <div class="pve-workspace">
+
+    <!-- LEFT SIDEBAR: Proxmox Resource Tree -->
+    <aside class="pve-sidebar">
+      <div class="pve-sidebar-header">
+        <span>Resource Tree</span>
+        <span id="node-count-badge" class="pve-tree-badge">0 Nodes</span>
+      </div>
+
+      <div class="pve-tree" id="resource-tree">
+        <!-- Root: Datacenter -->
+        <div class="pve-tree-item active" id="tree-item-datacenter" onclick="selectDatacenterView()">
+          <div class="pve-tree-label">
+            <span style="color: var(--pve-orange); font-size: 14px;">🏢</span>
+            <span>Datacenter</span>
+          </div>
+          <span class="pve-tree-badge" id="datacenter-summary-badge">Summary</span>
+        </div>
+
+        <div style="padding: 6px 12px; font-size: 10px; font-weight: 700; color: var(--pve-text-dim); text-transform: uppercase;">
+          Server Nodes
+        </div>
+
+        <!-- Dynamic Node List Container -->
+        <div id="tree-nodes-list"></div>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW -->
+    <main class="pve-main">
+
+      <!-- TABS BAR -->
+      <nav class="pve-tabs" id="view-tabs">
+        <div class="pve-tab active" id="tab-summary" onclick="switchTab('summary')">Summary</div>
+        <div class="pve-tab" id="tab-charts" onclick="switchTab('charts')">Live Charts</div>
+        <div class="pve-tab" id="tab-specs" onclick="switchTab('specs')">Hardware & Specs</div>
+      </nav>
+
+      <!-- CONTENT PANELS -->
+      <div class="pve-content" id="main-content">
+        <!-- Dynamically rendered by proxmox.js -->
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= BOTTOM CONSOLE: Proxmox Tasks & Polling Log ================= -->
+  <footer class="pve-bottom-console" id="bottom-console">
+    <div class="pve-console-header" onclick="toggleBottomConsole()">
+      <div class="pve-console-title">
+        <span>📋</span>
+        <span>Tasks & Polling Events</span>
+        <span style="font-weight: 400; color: var(--pve-text-dim); margin-left: 8px;" id="console-last-poll-time"></span>
+      </div>
+      <div style="font-size: 11px; color: var(--pve-text-muted);">
+        <span id="console-toggle-icon">▼</span>
+      </div>
+    </div>
+    <div class="pve-console-body">
+      <table class="pve-table">
+        <thead>
+          <tr>
+            <th style="width: 140px;">Time</th>
+            <th style="width: 150px;">Node</th>
+            <th style="width: 160px;">Action</th>
+            <th style="width: 90px;">Status</th>
+            <th style="width: 90px;">Latency</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="task-log-tbody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </footer>
+
+  <!-- ================= ADD / EDIT SERVER MODAL ================= -->
+  <div class="pve-modal-overlay" id="server-modal">
+    <div class="pve-modal">
+      <div class="pve-modal-header">
+        <h3 class="pve-modal-title" id="modal-title">Add Server Node</h3>
+        <button class="pve-btn pve-btn-sm" onclick="closeServerModal()">✕</button>
+      </div>
+      <div class="pve-modal-body">
+        <input type="hidden" id="modal-node-id" value="">
+
+        <div class="pve-form-group">
+          <label class="pve-form-label" for="node-name">Server Name *</label>
+          <input type="text" id="node-name" class="pve-form-input" placeholder="e.g. pve-slave-01" required>
+        </div>
+
+        <div class="pve-form-group">
+          <label class="pve-form-label" for="node-desc">Description</label>
+          <input type="text" id="node-desc" class="pve-form-input" placeholder="e.g. Python telemetry agent node">
+        </div>
+
+        <div class="pve-form-row">
+          <div class="pve-form-group">
+            <label class="pve-form-label" for="node-ip">IP Address / Hostname *</label>
+            <input type="text" id="node-ip" class="pve-form-input" value="127.0.0.1" required>
+          </div>
+          <div class="pve-form-group">
+            <label class="pve-form-label" for="node-port">Port *</label>
+            <input type="number" id="node-port" class="pve-form-input" value="8001" required>
+          </div>
+        </div>
+
+        <div class="pve-form-group">
+          <label class="pve-form-label" for="node-poll-interval">Individual Polling Interval (seconds)</label>
+          <input type="number" id="node-poll-interval" class="pve-form-input" value="5" min="1" max="300">
+        </div>
+
+        <!-- Connection Test Feedback -->
+        <div id="test-alert" class="test-alert"></div>
+      </div>
+      <div class="pve-modal-footer">
+        <button class="pve-btn" type="button" onclick="testConnection()">
+          <span>⚡</span> Test Connection
+        </button>
+        <button class="pve-btn" type="button" onclick="closeServerModal()">Cancel</button>
+        <button class="pve-btn pve-btn-primary" type="button" onclick="saveServerNode()">Save Node</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/proxmox.js"></script>
+</body>
+</html>

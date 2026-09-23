@@ -1,0 +1,12 @@
+# Server Monitoring System Dependencies
+
+# Slave Agent & Master Server Framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.0.0
+
+# System Telemetry
+psutil>=5.9.0
+
+# HTTP Client (for agent push / master polling)
+requests>=2.31.0

@@ -1,0 +1,772 @@
+/* Proxmox VE Enterprise Theme Stylesheet */
+
+:root {
+  --pve-bg-darkest: #12141a;
+  --pve-bg-dark: #181b22;
+  --pve-bg-panel: #20242e;
+  --pve-bg-card: #272c38;
+  --pve-bg-card-hover: #2e3442;
+  --pve-bg-input: #1b1e27;
+  --pve-border: #353c4d;
+  --pve-border-light: #444d63;
+
+  --pve-orange: #e57000;
+  --pve-orange-hover: #ff7f0e;
+  --pve-orange-dark: #b85700;
+  --pve-orange-glow: rgba(229, 112, 0, 0.25);
+
+  --pve-text-bright: #ffffff;
+  --pve-text-main: #e2e6ea;
+  --pve-text-muted: #9aa2b1;
+  --pve-text-dim: #6c7584;
+
+  --pve-status-green: #2ecc71;
+  --pve-status-green-glow: rgba(46, 204, 113, 0.25);
+  --pve-status-red: #e74c3c;
+  --pve-status-red-glow: rgba(231, 76, 60, 0.25);
+  --pve-status-orange: #f39c12;
+  --pve-status-blue: #3498db;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--pve-bg-darkest);
+  color: var(--pve-text-main);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   TOP BAR (Proxmox Navigation Header)
+   ========================================================================== */
+.pve-topbar {
+  height: 48px;
+  background-color: var(--pve-bg-dark);
+  border-bottom: 2px solid var(--pve-orange);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  user-select: none;
+  z-index: 100;
+}
+
+.pve-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pve-logo-badge {
+  background: linear-gradient(135deg, var(--pve-orange) 0%, var(--pve-orange-dark) 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pve-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pve-text-bright);
+}
+
+.pve-subtitle {
+  font-size: 11px;
+  color: var(--pve-text-muted);
+  border-left: 1px solid var(--pve-border);
+  padding-left: 10px;
+}
+
+.pve-top-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pve-polling-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--pve-bg-input);
+  border: 1px solid var(--pve-border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--pve-text-muted);
+}
+
+.pve-select {
+  background: transparent;
+  color: var(--pve-text-bright);
+  border: none;
+  outline: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 2px;
+}
+.pve-select option {
+  background: var(--pve-bg-card);
+  color: var(--pve-text-bright);
+}
+
+.pve-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--pve-border);
+  background: var(--pve-bg-card);
+  color: var(--pve-text-bright);
+  transition: all 0.15s ease-in-out;
+  text-decoration: none;
+}
+
+.pve-btn:hover {
+  background: var(--pve-bg-card-hover);
+  border-color: var(--pve-border-light);
+}
+
+.pve-btn-primary {
+  background: linear-gradient(180deg, var(--pve-orange) 0%, var(--pve-orange-dark) 100%);
+  border-color: var(--pve-orange-dark);
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.pve-btn-primary:hover {
+  background: linear-gradient(180deg, var(--pve-orange-hover) 0%, var(--pve-orange) 100%);
+  border-color: var(--pve-orange);
+}
+
+.pve-btn-danger {
+  background: #c0392b;
+  border-color: #962d22;
+  color: #fff;
+}
+.pve-btn-danger:hover {
+  background: #e74c3c;
+}
+
+.pve-btn-sm {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+/* ==========================================================================
+   APP WORKSPACE LAYOUT (Tree Sidebar + Main Panel)
+   ========================================================================== */
+.pve-workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left Resource Tree */
+.pve-sidebar {
+  width: 250px;
+  background-color: var(--pve-bg-dark);
+  border-right: 1px solid var(--pve-border);
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.pve-sidebar-header {
+  padding: 8px 12px;
+  background: var(--pve-bg-panel);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--pve-text-muted);
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--pve-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pve-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.pve-tree-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  color: var(--pve-text-main);
+  transition: background 0.1s;
+}
+
+.pve-tree-item:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.pve-tree-item.active {
+  background-color: rgba(229, 112, 0, 0.15);
+  border-left-color: var(--pve-orange);
+  color: var(--pve-text-bright);
+  font-weight: 600;
+}
+
+.pve-tree-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pve-tree-badge {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--pve-text-dim);
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-dot.online {
+  background-color: var(--pve-status-green);
+  box-shadow: 0 0 8px var(--pve-status-green-glow);
+}
+
+.status-dot.offline {
+  background-color: var(--pve-status-red);
+  box-shadow: 0 0 8px var(--pve-status-red-glow);
+}
+
+.status-dot.pending {
+  background-color: var(--pve-status-orange);
+}
+
+/* Main Content Area */
+.pve-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--pve-bg-darkest);
+  overflow-y: auto;
+}
+
+/* Tabs Bar */
+.pve-tabs {
+  background-color: var(--pve-bg-dark);
+  border-bottom: 1px solid var(--pve-border);
+  display: flex;
+  padding: 0 16px;
+  gap: 4px;
+}
+
+.pve-tab {
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pve-text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.pve-tab:hover {
+  color: var(--pve-text-bright);
+}
+
+.pve-tab.active {
+  color: var(--pve-text-bright);
+  border-bottom-color: var(--pve-orange);
+}
+
+.pve-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Empty State */
+.pve-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--pve-bg-panel);
+  border: 1px dashed var(--pve-border);
+  border-radius: 6px;
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.pve-empty-icon {
+  font-size: 42px;
+  color: var(--pve-orange);
+  margin-bottom: 16px;
+}
+
+.pve-empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--pve-text-bright);
+  margin-bottom: 8px;
+}
+
+.pve-empty-desc {
+  font-size: 13px;
+  color: var(--pve-text-muted);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* Cluster Overview Grid */
+.pve-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.pve-stat-card {
+  background: var(--pve-bg-panel);
+  border: 1px solid var(--pve-border);
+  border-radius: 4px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pve-stat-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--pve-text-dim);
+  letter-spacing: 0.5px;
+}
+
+.pve-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--pve-text-bright);
+  font-family: var(--font-mono);
+}
+
+.pve-stat-sub {
+  font-size: 11px;
+  color: var(--pve-text-muted);
+}
+
+/* Node Header Info Banner */
+.pve-node-banner {
+  background: var(--pve-bg-panel);
+  border: 1px solid var(--pve-border);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.pve-node-header-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pve-node-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--pve-text-bright);
+}
+
+.pve-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.pve-badge-online {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--pve-status-green);
+  border: 1px solid var(--pve-status-green);
+}
+
+.pve-badge-offline {
+  background: rgba(231, 76, 60, 0.15);
+  color: var(--pve-status-red);
+  border: 1px solid var(--pve-status-red);
+}
+
+.pve-node-specs {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--pve-text-muted);
+}
+
+.pve-node-specs strong {
+  color: var(--pve-text-main);
+}
+
+/* Proxmox Horizontal Meter Gauges */
+.pve-gauge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pve-gauge-card {
+  background: var(--pve-bg-panel);
+  border: 1px solid var(--pve-border);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.pve-gauge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.pve-gauge-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pve-text-bright);
+}
+
+.pve-gauge-val {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--pve-text-main);
+  font-weight: 600;
+}
+
+.pve-meter-bar {
+  height: 18px;
+  background: var(--pve-bg-input);
+  border: 1px solid var(--pve-border);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pve-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+  border-radius: 2px;
+  transition: width 0.4s ease-out;
+}
+
+.pve-meter-fill.warning {
+  background: linear-gradient(90deg, #d35400 0%, #f39c12 100%);
+}
+
+.pve-meter-fill.danger {
+  background: linear-gradient(90deg, #c0392b 0%, #e74c3c 100%);
+}
+
+.pve-meter-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* Charts Card */
+.pve-chart-container {
+  background: var(--pve-bg-panel);
+  border: 1px solid var(--pve-border);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.pve-chart-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pve-text-bright);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Proxmox Node Grid Cards */
+.pve-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.pve-node-card {
+  background: var(--pve-bg-panel);
+  border: 1px solid var(--pve-border);
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.pve-node-card:hover {
+  border-color: var(--pve-border-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.pve-node-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pve-node-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pve-text-bright);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Specs Table */
+.pve-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.pve-table th, .pve-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--pve-border);
+}
+
+.pve-table th {
+  background: var(--pve-bg-dark);
+  color: var(--pve-text-muted);
+  font-weight: 600;
+}
+
+.pve-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ==========================================================================
+   BOTTOM PROXMOX TASKS / EVENT LOG DRAWER
+   ========================================================================== */
+.pve-bottom-console {
+  background: var(--pve-bg-dark);
+  border-top: 1px solid var(--pve-border);
+  display: flex;
+  flex-direction: column;
+  transition: height 0.2s ease;
+  height: 180px;
+}
+
+.pve-bottom-console.collapsed {
+  height: 32px;
+}
+
+.pve-console-header {
+  height: 32px;
+  background: var(--pve-bg-panel);
+  border-bottom: 1px solid var(--pve-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.pve-console-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--pve-text-muted);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pve-console-body {
+  flex: 1;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* Modal */
+.pve-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pve-modal-overlay.open {
+  display: flex;
+}
+
+.pve-modal {
+  background: var(--pve-bg-panel);
+  border: 1px solid var(--pve-border-light);
+  border-radius: 4px;
+  width: 480px;
+  max-width: 90vw;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pve-modal-header {
+  background: var(--pve-bg-dark);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--pve-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pve-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--pve-text-bright);
+}
+
+.pve-modal-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pve-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pve-form-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pve-text-muted);
+  text-transform: uppercase;
+}
+
+.pve-form-input {
+  background: var(--pve-bg-input);
+  border: 1px solid var(--pve-border);
+  border-radius: 3px;
+  padding: 8px 10px;
+  color: var(--pve-text-bright);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.pve-form-input:focus {
+  border-color: var(--pve-orange);
+}
+
+.pve-form-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+}
+
+.pve-modal-footer {
+  background: var(--pve-bg-dark);
+  padding: 12px 16px;
+  border-top: 1px solid var(--pve-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.test-alert {
+  padding: 8px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  display: none;
+}
+.test-alert.success {
+  display: block;
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid var(--pve-status-green);
+  color: var(--pve-status-green);
+}
+.test-alert.error {
+  display: block;
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid var(--pve-status-red);
+  color: var(--pve-status-red);
+}

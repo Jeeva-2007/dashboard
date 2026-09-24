@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proxmox VE - Server Telemetry Master</title>
+  <title>Server Telemetry Master</title>
   <link rel="stylesheet" href="/css/proxmox.css">
   <!-- Chart.js for Proxmox Time-Series Telemetry Graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
 
   <!-- ================= TOP BAR ================= -->
   <header class="pve-topbar">
     <div class="pve-brand">
       <div class="pve-logo-badge">
-        <span>PROXMOX</span>
+        <span>MINI2</span>
         <span style="font-weight: 400; opacity: 0.9;">VE</span>
       </div>
       <span class="pve-title">Telemetry Monitor</span>
@@ -65,7 +67,8 @@
           <span class="pve-tree-badge" id="datacenter-summary-badge">Summary</span>
         </div>
 
-        <div style="padding: 6px 12px; font-size: 10px; font-weight: 700; color: var(--pve-text-dim); text-transform: uppercase;">
+        <div
+          style="padding: 6px 12px; font-size: 10px; font-weight: 700; color: var(--pve-text-dim); text-transform: uppercase;">
           Server Nodes
         </div>
 
@@ -99,7 +102,8 @@
       <div class="pve-console-title">
         <span>📋</span>
         <span>Tasks & Polling Events</span>
-        <span style="font-weight: 400; color: var(--pve-text-dim); margin-left: 8px;" id="console-last-poll-time"></span>
+        <span style="font-weight: 400; color: var(--pve-text-dim); margin-left: 8px;"
+          id="console-last-poll-time"></span>
       </div>
       <div style="font-size: 11px; color: var(--pve-text-muted);">
         <span id="console-toggle-icon">▼</span>
@@ -156,8 +160,14 @@
         </div>
 
         <div class="pve-form-group">
-          <label class="pve-form-label" for="node-poll-interval">Individual Polling Interval (seconds)</label>
-          <input type="number" id="node-poll-interval" class="pve-form-input" value="5" min="1" max="300">
+          <label class="pve-form-label" for="node-poll-interval">Individual Polling Interval</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="number" id="node-poll-interval" class="pve-form-input" value="5" min="1" style="flex: 1;">
+            <select id="node-poll-interval-unit" class="pve-select" style="width: auto;">
+              <option value="seconds">Seconds</option>
+              <option value="milliseconds">Milliseconds</option>
+            </select>
+          </div>
         </div>
 
         <!-- Connection Test Feedback -->
@@ -175,4 +185,5 @@
 
   <script src="/js/proxmox.js"></script>
 </body>
+
 </html>

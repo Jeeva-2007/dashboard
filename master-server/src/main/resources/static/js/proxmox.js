@@ -474,73 +474,86 @@ async function loadNodeCharts(nodeId) {
 
     const ctx1 = document.getElementById('cpuRamChart');
     if (ctx1) {
-      if (cpuChart) cpuChart.destroy();
-      cpuChart = new Chart(ctx1, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'CPU Usage %',
-              data: cpuData,
-              borderColor: '#e57000',
-              backgroundColor: 'rgba(229, 112, 0, 0.1)',
-              borderWidth: 2,
-              fill: true,
-              tension: 0.3
-            },
-            {
-              label: 'RAM Usage %',
-              data: ramData,
-              borderColor: '#2ecc71',
-              backgroundColor: 'rgba(46, 204, 113, 0.1)',
-              borderWidth: 2,
-              fill: true,
-              tension: 0.3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { min: 0, max: 100, grid: { color: '#353c4d' } },
-            x: { grid: { color: 'rgba(255,255,255,0.05)' } }
+      if (cpuChart) {
+        cpuChart.data.labels = labels;
+        cpuChart.data.datasets[0].data = cpuData;
+        cpuChart.data.datasets[1].data = ramData;
+        cpuChart.update('none');
+      } else {
+        cpuChart = new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'CPU Usage %',
+                data: cpuData,
+                borderColor: '#e57000',
+                backgroundColor: 'rgba(229, 112, 0, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: 'RAM Usage %',
+                data: ramData,
+                borderColor: '#2ecc71',
+                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+              }
+            ]
           },
-          plugins: { legend: { labels: { color: '#e2e6ea' } } }
-        }
-      });
+          options: {
+            animation: false,
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { min: 0, max: 100, grid: { color: '#353c4d' } },
+              x: { grid: { color: 'rgba(255,255,255,0.05)' } }
+            },
+            plugins: { legend: { labels: { color: '#e2e6ea' } } }
+          }
+        });
+      }
     }
 
     const ctx2 = document.getElementById('diskNetChart');
     if (ctx2) {
-      if (memChart) memChart.destroy();
-      memChart = new Chart(ctx2, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Disk Usage %',
-              data: diskData,
-              borderColor: '#3498db',
-              backgroundColor: 'rgba(52, 152, 219, 0.1)',
-              borderWidth: 2,
-              fill: true,
-              tension: 0.3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { min: 0, max: 100, grid: { color: '#353c4d' } },
-            x: { grid: { color: 'rgba(255,255,255,0.05)' } }
+      if (memChart) {
+        memChart.data.labels = labels;
+        memChart.data.datasets[0].data = diskData;
+        memChart.update('none');
+      } else {
+        memChart = new Chart(ctx2, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'Disk Usage %',
+                data: diskData,
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+              }
+            ]
           },
-          plugins: { legend: { labels: { color: '#e2e6ea' } } }
-        }
-      });
+          options: {
+            animation: false,
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { min: 0, max: 100, grid: { color: '#353c4d' } },
+              x: { grid: { color: 'rgba(255,255,255,0.05)' } }
+            },
+            plugins: { legend: { labels: { color: '#e2e6ea' } } }
+          }
+        });
+      }
     }
 
   } catch (e) {

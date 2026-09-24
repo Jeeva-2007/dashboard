@@ -45,7 +45,7 @@ def get_system_info():
 def get_cpu_info():
 
     return {
-        "usage_percent": psutil.cpu_percent(interval=0.5),
+        "usage_percent": psutil.cpu_percent(interval=None),
         "physical_cores": psutil.cpu_count(logical=False),
         "logical_cores": psutil.cpu_count(logical=True)
     }
